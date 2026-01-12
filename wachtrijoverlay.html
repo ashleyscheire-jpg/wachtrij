@@ -32,7 +32,6 @@ async function updateNames() {
     const res = await fetch(url);
     const text = await res.text();
 
-    // Parse Google Sheets JSON
     let json;
     try {
       json = JSON.parse(text.substr(47).slice(0, -2));
@@ -42,13 +41,16 @@ async function updateNames() {
       return;
     }
 
-    // Haal alleen kolom A op, filter lege rijen
+    // Filter alleen rijen waar status (kolom B) niet 'done' is
     const rows = (json.table.rows || [])
-      .map(r => r.c[0]?.v)
-      .filter(Boolean);
+      .map(r => ({
+        name: r.c[0]?.v,   // kolom A = naam
+        status: r.c[1]?.v  // kolom B = done of leeg
+      }))
+      .filter(r => r.name && r.status !== 'done');
 
-    // Toon namen in overlay
-    document.getElementById('names').innerHTML = rows.length ? rows.join('<br>') : "Geen wachtrij momenteel";
+    // Toon alleen namen in overlay
+    document.getElementById('names').innerHTML = rows.length ? rows.map(r => r.name).join('<br>') : "Geen wachtrij momenteel";
 
   } catch (e) {
     console.error('Fout bij ophalen Sheet:', e);
