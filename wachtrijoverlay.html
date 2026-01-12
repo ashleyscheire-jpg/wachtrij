@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    font-size: 40px;
+    color: white;
+    background: transparent;
+  }
+  #names {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    text-shadow: 2px 2px 4px black;
+  }
+</style>
+</head>
+<body>
+
+<div id="names">Wachtrij wordt geladen…</div>
+
+<script>
+async function updateNames() {
+  const sheetId = '1bT7pAzYvwI9Txo2iQ9BMtcJmvhIEh2TSrmPgKddkmtE';
+  const sheetName = 'Blad1';
+  const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+
+    // Parse Google Sheets JSON
+    const json = JSON.parse(text.substr(47).slice(0, -2));
+    const rows = json.table.rows.map(r => r.c[0]?.v).filter(Boolean);
+
+    // Toon namen
+    if (rows.length > 0) {
+      document.getElementById('names').innerHTML = rows.join('<br>');
+    } else {
+      document.getElementById('names').textContent = "Geen wachtrij momenteel";
+    }
+  } catch (e) {
+    console.error('Fout bij ophalen Sheet:', e);
+    document.getElementById('names').textContent = "Fout bij laden…";
+  }
+}
+
+// Update elke 3 seconden voor realtime
+setInterval(updateNames, 3000);
+updateNames();
+</script>
+
+</body>
+</html>
