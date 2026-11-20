@@ -37,7 +37,7 @@ async function updateNames() {
       json = JSON.parse(text.substr(47).slice(0, -2));
     } catch {
       console.error("Fout bij parsen van Sheet JSON");
-      document.getElementById('names').textContent = "Geen wachtrij momenteel";
+      document.getElementById('names').textContent = "De wachtrij is vrij!";
       return;
     }
 
@@ -50,11 +50,11 @@ async function updateNames() {
       .filter(r => r.name && r.status !== 'done');
 
     // Toon alleen namen in overlay
-    document.getElementById('names').innerHTML = rows.length ? rows.map(r => r.name).join('<br>') : "Geen wachtrij momenteel";
+    document.getElementById('names').innerHTML = rows.length ? rows.map(r => r.name).join('<br>') : "De wachtrij is vrij!";
 
   } catch (e) {
     console.error('Fout bij ophalen Sheet:', e);
-    document.getElementById('names').textContent = "Geen wachtrij momenteel";
+    document.getElementById('names').textContent = "De wachtrij s vrij!";
   }
 }
 
